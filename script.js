@@ -7,7 +7,10 @@ const calculator = {
     history: [],
     isScientificMode: false,
     expression: '',
-    lastResult: null
+    lastResult: null,
+    lastOperation: null,
+    parenthesesCount: 0,
+    inParentheses: false
 };
 
 // Constants
@@ -57,7 +60,14 @@ function initializeCalculator() {
 function setupEventListeners() {
     // Number buttons
     document.querySelectorAll('.btn.number').forEach(button => {
-        button.addEventListener('click', () => handleNumber(button.textContent));
+        button.addEventListener('click', () => {
+            // If we just performed a scientific function, clear the current value
+            if (calculator.lastOperation === 'function') {
+                calculator.currentValue = '0';
+                calculator.lastOperation = null;
+            }
+            handleNumber(button.textContent);
+        });
     });
 
     // Operator buttons
@@ -67,7 +77,18 @@ function setupEventListeners() {
 
     // Function buttons (scientific mode)
     document.querySelectorAll('.btn.function').forEach(button => {
-        button.addEventListener('click', () => handleFunction(button.dataset.action));
+        button.addEventListener('click', () => {
+            calculator.lastOperation = 'function';
+            handleFunction(button.dataset.action);
+        });
+    });
+
+    // Special buttons (parentheses and constants)
+    document.querySelectorAll('.btn.special').forEach(button => {
+        button.addEventListener('click', () => {
+            calculator.lastOperation = 'special';
+            handleSpecial(button.dataset.action);
+        });
     });
 
     // Memory buttons
@@ -75,11 +96,41 @@ function setupEventListeners() {
         button.addEventListener('click', () => handleMemory(button.dataset.action));
     });
 
-    // Clear button
-    document.querySelector('[data-action="clear"]').addEventListener('click', clearCalculator);
+    // Clear buttons
+    document.querySelectorAll('[data-action="clear"]').forEach(button => {
+        button.addEventListener('click', clearCalculator);
+    });
 
-    // Equals button
-    document.querySelector('[data-action="equals"]').addEventListener('click', calculateResult);
+    // All Clear buttons
+    document.querySelectorAll('[data-action="all-clear"]').forEach(button => {
+        button.addEventListener('click', () => {
+            calculator.currentValue = '0';
+            calculator.previousValue = '';
+            calculator.operation = null;
+            calculator.expression = '';
+            calculator.memory = 0;
+            updateDisplay();
+            updateExpressionPreview();
+        });
+    });
+
+    // Backspace buttons
+    document.querySelectorAll('[data-action="backspace"]').forEach(button => {
+        button.addEventListener('click', () => {
+            if (calculator.currentValue.length > 1) {
+                calculator.currentValue = calculator.currentValue.slice(0, -1);
+            } else {
+                calculator.currentValue = '0';
+            }
+            updateDisplay();
+            updateExpressionPreview();
+        });
+    });
+
+    // Equals buttons
+    document.querySelectorAll('[data-action="equals"]').forEach(button => {
+        button.addEventListener('click', calculateResult);
+    });
 }
 
 // Handle number input
@@ -112,30 +163,79 @@ function handleFunction(func) {
     const value = parseFloat(calculator.currentValue);
     let result;
 
-    switch (func) {
-        case 'sin':
-            result = Math.sin(value * Math.PI / 180);
-            break;
-        case 'cos':
-            result = Math.cos(value * Math.PI / 180);
-            break;
-        case 'tan':
-            result = Math.tan(value * Math.PI / 180);
-            break;
-        case 'log':
-            result = Math.log10(value);
-            break;
-        case 'ln':
-            result = Math.log(value);
-            break;
-        case 'factorial':
-            result = calculateFactorial(value);
-            break;
+    // Check for invalid input
+    if (isNaN(value)) {
+        calculator.currentValue = 'Error';
+        updateDisplay();
+        updateExpressionPreview();
+        return;
     }
 
-    calculator.currentValue = result.toString();
-    updateDisplay();
-    updateExpressionPreview();
+    try {
+        switch (func) {
+            case 'sin':
+                // Convert degrees to radians and calculate sin
+                result = Math.sin((value * Math.PI) / 180);
+                break;
+            case 'cos':
+                // Convert degrees to radians and calculate cos
+                result = Math.cos((value * Math.PI) / 180);
+                break;
+            case 'tan':
+                // Convert degrees to radians and calculate tan
+                result = Math.tan((value * Math.PI) / 180);
+                break;
+            case 'log':
+                // Check for valid input for logarithm
+                if (value <= 0) {
+                    throw new Error('Invalid input for logarithm');
+                }
+                result = Math.log10(value);
+                break;
+            case 'ln':
+                // Check for valid input for natural logarithm
+                if (value <= 0) {
+                    throw new Error('Invalid input for natural logarithm');
+                }
+                result = Math.log(value);
+                break;
+            case 'factorial':
+                result = calculateFactorial(value);
+                break;
+            default:
+                throw new Error('Unknown function');
+        }
+
+        // Round the result to 8 decimal places to avoid floating point issues
+        result = Math.round(result * 100000000) / 100000000;
+        
+        // Check if the result is valid
+        if (isNaN(result) || !isFinite(result)) {
+            throw new Error('Invalid result');
+        }
+
+        // Add to history
+        const expression = `${func}(${calculator.currentValue})`;
+        calculator.history.push({
+            expression,
+            result: result.toString()
+        });
+
+        // Store the result and update display
+        calculator.currentValue = result.toString();
+        calculator.previousValue = '';
+        calculator.operation = null;
+        updateDisplay();
+        updateExpressionPreview();
+        updateHistory();
+
+    } catch (error) {
+        calculator.currentValue = 'Error';
+        calculator.previousValue = '';
+        calculator.operation = null;
+        updateDisplay();
+        updateExpressionPreview();
+    }
 }
 
 // Handle memory operations
@@ -170,55 +270,66 @@ function calculateFactorial(n) {
 
 // Calculate the final result
 function calculateResult() {
-    if (!calculator.operation || !calculator.previousValue) return;
-
-    const prev = parseFloat(calculator.previousValue);
-    const current = parseFloat(calculator.currentValue);
-    let result;
-
-    switch (calculator.operation) {
-        case 'add':
-            result = prev + current;
-            break;
-        case 'subtract':
-            result = prev - current;
-            break;
-        case 'multiply':
-            result = prev * current;
-            break;
-        case 'divide':
-            result = prev / current;
-            break;
-        case 'power':
-            result = Math.pow(prev, current);
-            break;
-        case 'percent':
-            result = (prev * current) / 100;
-            break;
-        case 'sqrt':
-            result = Math.sqrt(current);
-            break;
+    if (!calculator.operation && !calculator.previousValue) {
+        // If there's no operation, just keep the current value
+        return;
     }
 
-    // Add to history
-    const expression = `${calculator.previousValue} ${getOperatorSymbol(calculator.operation)} ${calculator.currentValue}`;
-    calculator.history.push({
-        expression,
-        result: result.toString()
-    });
+    try {
+        // Handle expressions with parentheses
+        let expression = calculator.previousValue;
+        if (calculator.operation) {
+            expression += getOperatorSymbol(calculator.operation) + calculator.currentValue;
+        } else {
+            expression = calculator.currentValue;
+        }
 
-    // Show fun message for large numbers
-    if (Math.abs(result) > 1000000) {
-        showFunMessage();
+        // Replace implicit multiplication (e.g., (2+3)6 becomes (2+3)*6)
+        expression = expression.replace(/\)(\d+)/g, ')*$1');
+        expression = expression.replace(/\)([eπ])/g, ')*$1');
+        expression = expression.replace(/(\d+)\(/g, '$1*(');
+        expression = expression.replace(/([eπ])\(/g, '$1*(');
+
+        // Evaluate the expression
+        let result;
+        try {
+            // Use Function constructor to safely evaluate the expression
+            result = new Function('return ' + expression)();
+        } catch (error) {
+            throw new Error('Invalid expression');
+        }
+
+        // Check for invalid results
+        if (isNaN(result) || !isFinite(result)) {
+            throw new Error('Invalid result');
+        }
+
+        // Add to history
+        calculator.history.push({
+            expression: expression,
+            result: result.toString()
+        });
+
+        // Show fun message for large numbers
+        if (Math.abs(result) > 1000000) {
+            showFunMessage();
+        }
+
+        calculator.lastResult = result;
+        calculator.currentValue = result.toString();
+        calculator.operation = null;
+        calculator.previousValue = '';
+        updateDisplay();
+        updateExpressionPreview();
+        updateHistory();
+
+    } catch (error) {
+        calculator.currentValue = 'Error';
+        calculator.operation = null;
+        calculator.previousValue = '';
+        updateDisplay();
+        updateExpressionPreview();
     }
-
-    calculator.lastResult = result;
-    calculator.currentValue = result.toString();
-    calculator.operation = null;
-    calculator.previousValue = '';
-    updateDisplay();
-    updateExpressionPreview();
-    updateHistory();
 }
 
 // Get operator symbol for display
@@ -628,4 +739,60 @@ function setupQuiz() {
     });
 
     startNewQuestion();
+}
+
+// Handle special buttons (parentheses and constants)
+function handleSpecial(action) {
+    switch (action) {
+        case 'open-parenthesis':
+            handleOpenParenthesis();
+            break;
+        case 'close-parenthesis':
+            handleCloseParenthesis();
+            break;
+        case 'e':
+            handleConstant('E');
+            break;
+        case 'pi':
+            handleConstant('PI');
+            break;
+    }
+    updateDisplay();
+    updateExpressionPreview();
+}
+
+// Handle opening parenthesis
+function handleOpenParenthesis() {
+    if (calculator.currentValue === '0' || calculator.lastOperation === 'function') {
+        // Start new parentheses
+        calculator.currentValue = '(';
+        calculator.inParentheses = true;
+        calculator.parenthesesCount++;
+    } else {
+        // Start new parentheses after a number
+        calculator.currentValue += '(';
+        calculator.inParentheses = true;
+        calculator.parenthesesCount++;
+    }
+}
+
+// Handle closing parenthesis
+function handleCloseParenthesis() {
+    if (calculator.inParentheses) {
+        // Close parentheses if we're inside them
+        calculator.currentValue += ')';
+        calculator.parenthesesCount--;
+        if (calculator.parenthesesCount === 0) {
+            calculator.inParentheses = false;
+        }
+    }
+}
+
+// Handle constants (e, π)
+function handleConstant(constant) {
+    if (calculator.currentValue === '0' || calculator.lastOperation === 'function') {
+        calculator.currentValue = CONSTANTS[constant].toString();
+    } else {
+        calculator.currentValue += CONSTANTS[constant].toString();
+    }
 } 
