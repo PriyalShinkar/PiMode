@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <!-- Theme Switcher -->
+        <div class="theme-switcher">
+            <button class="theme-btn" data-theme="light">Light</button>
+            <button class="theme-btn" data-theme="dark">Dark</button>
+            <button class="theme-btn" data-theme="neon">Neon</button>
+            <button class="theme-btn" data-theme="retro">Retro</button>
+        </div>
+
+        <!-- Calculator Main -->
+        <div class="calculator">
+            <!-- Display Section -->
+            <div class="display">
+                <div class="expression-preview"></div>
+                <div class="result">0</div>
+            </div>
+
+            <!-- Basic Mode Buttons -->
+            <div class="keypad basic-mode">
+                <button class="btn memory" data-action="mc">MC</button>
+                <button class="btn memory" data-action="mr">MR</button>
+                <button class="btn memory" data-action="m-plus">M+</button>
+                <button class="btn memory" data-action="m-minus">M-</button>
+                <button class="btn clear" data-action="clear">C</button>
+                <button class="btn operator" data-action="sqrt">√</button>
+                <button class="btn operator" data-action="percent">%</button>
+                <button class="btn operator" data-action="divide">÷</button>
+                <button class="btn number">7</button>
+                <button class="btn number">8</button>
+                <button class="btn number">9</button>
+                <button class="btn operator" data-action="multiply">×</button>
+                <button class="btn number">4</button>
+                <button class="btn number">5</button>
+                <button class="btn number">6</button>
+                <button class="btn operator" data-action="subtract">−</button>
+                <button class="btn number">1</button>
+                <button class="btn number">2</button>
+                <button class="btn number">3</button>
+                <button class="btn operator" data-action="add">+</button>
+                <button class="btn number">0</button>
+                <button class="btn number">.</button>
+                <button class="btn equals" data-action="equals">=</button>
+            </div>
+
+            <!-- Scientific Mode Buttons -->
+            <div class="keypad scientific-mode hidden">
+                <button class="btn function" data-action="sin">sin</button>
+                <button class="btn function" data-action="cos">cos</button>
+                <button class="btn function" data-action="tan">tan</button>
+                <button class="btn function" data-action="log">log</button>
+                <button class="btn function" data-action="ln">ln</button>
+                <button class="btn constant" data-action="pi">π</button>
+                <button class="btn constant" data-action="e">e</button>
+                <button class="btn function" data-action="factorial">!</button>
+                <button class="btn operator" data-action="power">^</button>
+                <button class="btn parenthesis" data-action="(">(</button>
+                <button class="btn parenthesis" data-action=")">)</button>
+                <!-- Include all basic mode buttons here as well -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Panel Toggle Buttons -->
+    <div class="side-panel-toggles">
+        <!-- Mode Toggle -->
+        <button class="mode-toggle-btn">
+            <i class="fas fa-exchange-alt"></i>
+        </button>
+
+        <!-- History Panel Toggle -->
+        <button class="history-toggle">
+            <i class="fas fa-history"></i>
+        </button>
+
+        <!-- Utilities Panel Toggle -->
+        <button class="utilities-toggle">
+            <i class="fas fa-tools"></i>
+        </button>
+
+        <!-- Quick Math Quiz Toggle -->
+        <button class="quiz-toggle">
+            <i class="fas fa-gamepad"></i>
+        </button>
+    </div>
+
+    <!-- Side Panels -->
+    <div class="side-panels">
+        <!-- Mode Panel -->
+        <div class="mode-panel">
+            <h3>Calculator Mode</h3>
+            <div class="mode-options">
+                <button class="mode-btn active" data-mode="basic">Basic</button>
+                <button class="mode-btn" data-mode="scientific">Scientific</button>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="history-panel">
+            <h3>Calculation History</h3>
+            <div class="history-list"></div>
+        </div>
+
+        <!-- Utilities Panel -->
+        <div class="utilities-panel">
+            <div class="timer-section">
+                <h3>Timer & Stopwatch</h3>
+                <div class="timer-display">00:00:00</div>
+                <button class="timer-btn" data-action="start">Start</button>
+                <button class="timer-btn" data-action="stop">Stop</button>
+                <button class="timer-btn" data-action="reset">Reset</button>
+            </div>
+
+            <div class="converter-section">
+                <h3>Number System Converter</h3>
+                <select class="converter-type">
+                    <option value="decimal">Decimal</option>
+                    <option value="binary">Binary</option>
+                    <option value="hex">Hexadecimal</option>
+                    <option value="octal">Octal</option>
+                </select>
+                <input type="text" class="converter-input" placeholder="Enter number">
+                <div class="converter-result"></div>
+            </div>
+
+            <div class="unit-converter-section">
+                <h3>Unit Converter</h3>
+                <select class="unit-type">
+                    <option value="temperature">Temperature</option>
+                    <option value="weight">Weight</option>
+                    <option value="distance">Distance</option>
+                </select>
+                <div class="unit-converter-inputs"></div>
+            </div>
+        </div>
+
+        <!-- Quick Math Quiz Panel -->
+        <div class="quiz-panel">
+            <h3>Quick Math Quiz</h3>
+            <div class="quiz-question"></div>
+            <input type="number" class="quiz-answer" placeholder="Your answer">
+            <button class="quiz-submit">Submit</button>
+            <div class="quiz-score">Score: 0</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
