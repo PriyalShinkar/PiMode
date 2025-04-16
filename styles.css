@@ -1,99 +1,122 @@
 /* CSS Variables for Theming */
 :root {
     /* Light Theme (Default) */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f0f0f0;
+    --bg-primary: transparent;
+    --bg-secondary: rgba(240, 240, 240, 0.92);
     --text-primary: #333333;
     --text-secondary: #666666;
     --accent-color: #4a90e2;
-    --btn-bg: #e0e0e0;
-    --btn-hover: #d0d0d0;
-    --operator-bg: #f8f9fa;
+    --btn-bg: rgba(224, 224, 224, 0.95);
+    --btn-hover: rgba(208, 208, 208, 0.95);
+    --operator-bg: rgba(248, 249, 250, 0.95);
     --equals-bg: #4a90e2;
     --equals-color: #ffffff;
-    --display-bg: #ffffff;
-    --border-color: #dddddd;
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    --display-bg: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(221, 221, 221, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.25);
+    --overlay-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Dark Theme */
 [data-theme="dark"] {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
+    --bg-primary: transparent;
+    --bg-secondary: rgba(45, 45, 45, 0.92);
     --text-primary: #ffffff;
     --text-secondary: #cccccc;
     --accent-color: #4a90e2;
-    --btn-bg: #3d3d3d;
-    --btn-hover: #4d4d4d;
-    --operator-bg: #2d2d2d;
+    --btn-bg: rgba(61, 61, 61, 0.95);
+    --btn-hover: rgba(77, 77, 77, 0.95);
+    --operator-bg: rgba(45, 45, 45, 0.95);
     --equals-bg: #4a90e2;
     --equals-color: #ffffff;
-    --display-bg: #2d2d2d;
-    --border-color: #404040;
-    --shadow-color: rgba(0, 0, 0, 0.3);
+    --display-bg: rgba(45, 45, 45, 0.95);
+    --border-color: rgba(64, 64, 64, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --overlay-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Neon Theme */
 [data-theme="neon"] {
-    --bg-primary: #000000;
-    --bg-secondary: #1a1a1a;
+    --bg-primary: transparent;
+    --bg-secondary: rgba(26, 26, 26, 0.92);
     --text-primary: #00ff00;
     --text-secondary: #00cc00;
     --accent-color: #00ff00;
-    --btn-bg: #1a1a1a;
-    --btn-hover: #2a2a2a;
-    --operator-bg: #1a1a1a;
+    --btn-bg: rgba(26, 26, 26, 0.95);
+    --btn-hover: rgba(42, 42, 42, 0.95);
+    --operator-bg: rgba(26, 26, 26, 0.95);
     --equals-bg: #00ff00;
     --equals-color: #000000;
-    --display-bg: #1a1a1a;
+    --display-bg: rgba(26, 26, 26, 0.95);
     --border-color: #00ff00;
     --shadow-color: rgba(0, 255, 0, 0.2);
+    --overlay-color: rgba(0, 255, 0, 0.1);
 }
 
 /* Retro Theme */
 [data-theme="retro"] {
-    --bg-primary: #2c1810;
-    --bg-secondary: #3d2317;
+    --bg-primary: transparent;
+    --bg-secondary: rgba(61, 35, 23, 0.92);
     --text-primary: #ffd700;
     --text-secondary: #ffa500;
     --accent-color: #ffd700;
-    --btn-bg: #3d2317;
-    --btn-hover: #4d2d27;
-    --operator-bg: #3d2317;
+    --btn-bg: rgba(61, 35, 23, 0.95);
+    --btn-hover: rgba(77, 45, 39, 0.95);
+    --operator-bg: rgba(61, 35, 23, 0.95);
     --equals-bg: #ffd700;
     --equals-color: #2c1810;
-    --display-bg: #1a0f0a;
+    --display-bg: rgba(26, 15, 10, 0.95);
     --border-color: #ffd700;
     --shadow-color: rgba(255, 215, 0, 0.2);
+    --overlay-color: rgba(44, 24, 16, 0.75);
 }
 
 /* Global Styles */
-* {
+html, body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    transition: background-color 0.3s, color 0.3s;
+    height: 100%;
+    width: 100%;
 }
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: var(--bg-primary);
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    background: url('math-bg.jpg') center center/cover no-repeat fixed;
+    overflow-x: hidden;
+}
+
+/* Add overlay to improve contrast */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--overlay-color);
+    z-index: 0;
+    pointer-events: none;
+    transition: background-color 0.3s ease;
 }
 
 .calculator-container {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 400px;
     margin: 20px;
     background-color: var(--bg-secondary);
     border-radius: 10px;
-    box-shadow: 0 4px 8px var(--shadow-color);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Theme Switcher */
@@ -148,6 +171,80 @@ body {
     padding: 10px;
 }
 
+/* Scientific Mode Specific Styles */
+.scientific-mode {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.scientific-mode .btn {
+    font-size: 0.9em;
+    padding: 12px 8px;
+}
+
+.scientific-mode .function,
+.scientific-mode .constant,
+.scientific-mode .parenthesis {
+    background-color: var(--operator-bg);
+    color: var(--text-primary);
+}
+
+.scientific-mode .function:hover,
+.scientific-mode .constant:hover,
+.scientific-mode .parenthesis:hover {
+    background-color: var(--btn-hover);
+}
+
+/* Scientific mode button positioning */
+.scientific-mode .btn:nth-child(1) { grid-area: 1 / 1 / 3 / 2; } /* sin */
+.scientific-mode .btn:nth-child(2) { grid-area: 1 / 2 / 3 / 3; } /* cos */
+.scientific-mode .btn:nth-child(3) { grid-area: 1 / 3 / 3 / 4; } /* tan */
+.scientific-mode .btn:nth-child(4) { grid-area: 1 / 4 / 3 / 5; } /* log */
+.scientific-mode .btn:nth-child(5) { grid-area: 1 / 5 / 3 / 6; } /* ln */
+.scientific-mode .btn:nth-child(6) { grid-area: 3 / 1 / 4 / 2; } /* π */
+.scientific-mode .btn:nth-child(7) { grid-area: 3 / 2 / 4 / 3; } /* e */
+.scientific-mode .btn:nth-child(8) { grid-area: 3 / 3 / 4 / 4; } /* ! */
+.scientific-mode .btn:nth-child(9) { grid-area: 3 / 4 / 4 / 5; } /* ^ */
+.scientific-mode .btn:nth-child(10) { grid-area: 3 / 5 / 4 / 6; } /* ( */
+.scientific-mode .btn:nth-child(11) { grid-area: 4 / 1 / 5 / 2; } /* ) */
+.scientific-mode .btn:nth-child(12) { grid-area: 4 / 2 / 5 / 3; } /* MC */
+.scientific-mode .btn:nth-child(13) { grid-area: 4 / 3 / 5 / 4; } /* MR */
+.scientific-mode .btn:nth-child(14) { grid-area: 4 / 4 / 5 / 5; } /* M+ */
+.scientific-mode .btn:nth-child(15) { grid-area: 4 / 5 / 5 / 6; } /* M- */
+.scientific-mode .btn:nth-child(16) { grid-area: 5 / 1 / 6 / 2; } /* C */
+.scientific-mode .btn:nth-child(17) { grid-area: 5 / 2 / 6 / 3; } /* √ */
+.scientific-mode .btn:nth-child(18) { grid-area: 5 / 3 / 6 / 4; } /* % */
+.scientific-mode .btn:nth-child(19) { grid-area: 5 / 4 / 6 / 5; } /* ÷ */
+.scientific-mode .btn:nth-child(20) { grid-area: 5 / 5 / 6 / 6; } /* 7 */
+.scientific-mode .btn:nth-child(21) { grid-area: 6 / 1 / 7 / 2; } /* 8 */
+.scientific-mode .btn:nth-child(22) { grid-area: 6 / 2 / 7 / 3; } /* 9 */
+.scientific-mode .btn:nth-child(23) { grid-area: 6 / 3 / 7 / 4; } /* × */
+.scientific-mode .btn:nth-child(24) { grid-area: 6 / 4 / 7 / 5; } /* 4 */
+.scientific-mode .btn:nth-child(25) { grid-area: 6 / 5 / 7 / 6; } /* 5 */
+.scientific-mode .btn:nth-child(26) { grid-area: 7 / 1 / 8 / 2; } /* 6 */
+.scientific-mode .btn:nth-child(27) { grid-area: 7 / 2 / 8 / 3; } /* − */
+.scientific-mode .btn:nth-child(28) { grid-area: 7 / 3 / 8 / 4; } /* 1 */
+.scientific-mode .btn:nth-child(29) { grid-area: 7 / 4 / 8 / 5; } /* 2 */
+.scientific-mode .btn:nth-child(30) { grid-area: 7 / 5 / 8 / 6; } /* 3 */
+.scientific-mode .btn:nth-child(31) { grid-area: 8 / 1 / 9 / 2; } /* + */
+.scientific-mode .btn:nth-child(32) { grid-area: 8 / 2 / 9 / 3; } /* 0 */
+.scientific-mode .btn:nth-child(33) { grid-area: 8 / 3 / 9 / 4; } /* . */
+.scientific-mode .btn:nth-child(34) { grid-area: 8 / 4 / 9 / 6; } /* = */
+
+/* Responsive adjustments for scientific mode */
+@media (max-width: 600px) {
+    .scientific-mode {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+    }
+    
+    .scientific-mode .btn {
+        font-size: 0.8em;
+        padding: 10px 6px;
+        grid-area: auto !important;
+    }
+}
+
 .btn {
     padding: 15px;
     border: none;
@@ -199,7 +296,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px var(--shadow-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
 }
 
 .mode-toggle-btn:hover,
@@ -217,6 +315,8 @@ body {
     width: 300px;
     height: 100vh;
     background-color: var(--bg-secondary);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: -2px 0 5px var(--shadow-color);
     transition: right 0.3s ease;
     z-index: 90;
